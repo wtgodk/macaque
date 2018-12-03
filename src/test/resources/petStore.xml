@@ -7,5 +7,7 @@
     <bean id="petStore"
           class="cn.godk.macaque.spring.service.PetStoreServiceImpl" >
     </bean>
-
+    <bean id="invild"
+          class="cn.godk.macaque.spring.service.xxx" >
+    </bean>
 </beans>
