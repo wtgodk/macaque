@@ -1,7 +1,7 @@
 package cn.godk.macaque.spring.beans.Exception;
 
 /**
- *  Exception for beans Base class
+ * Exception for beans Base class
  *
  * @author: godk
  * @program: macaque
@@ -10,7 +10,8 @@ package cn.godk.macaque.spring.beans.Exception;
 public class BeansException extends RuntimeException {
 
     public BeansException(String msg) {
-        super(msg);	}
+        super(msg);
+    }
 
     public BeansException(String msg, Throwable cause) {
 

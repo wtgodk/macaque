@@ -3,7 +3,7 @@ package cn.godk.macaque.spring.beans.factory;
 import cn.godk.macaque.spring.beans.BeanDefinition;
 
 /**
- *  beanFactory interface
+ * beanFactory interface
  *
  * @author: godk
  * @program: macaque
@@ -12,13 +12,15 @@ import cn.godk.macaque.spring.beans.BeanDefinition;
 public interface BeanFactory {
     /**
      * get Bean by beanID
+     *
      * @param beanID
      * @return
      */
     BeanDefinition getBeanDefinition(String beanID);
 
     /**
-     *  get bean by name
+     * get bean by name
+     *
      * @param beanName
      * @return
      */

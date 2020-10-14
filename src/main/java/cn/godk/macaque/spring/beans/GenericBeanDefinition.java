@@ -1,13 +1,13 @@
 package cn.godk.macaque.spring.beans;
 
 /**
+ * generic BeanDefinition
  *
- *  generic BeanDefinition
  * @author: godk
  * @program: macaque
  * @create: 2018-12-03  11:22
  */
-public class GenericBeanDefinition implements  BeanDefinition {
+public class GenericBeanDefinition implements BeanDefinition {
 
     private String id;
     private String beanClassName;
@@ -16,6 +16,7 @@ public class GenericBeanDefinition implements  BeanDefinition {
         this.id = id;
         this.beanClassName = beanClassName;
     }
+
     public String getBeanClassName() {
         return this.beanClassName;
     }

@@ -13,8 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- *
  * BeanFactory test case
+ *
  * @author: godk
  * @program: macaque
  * @create: 2018-12-03  11:07
@@ -25,7 +25,7 @@ public class BeanFactoryTest {
     XmlBeanDefinitionReader reader = null;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         factory = new DefaultBeanFactory();
         reader = new XmlBeanDefinitionReader(factory);
 
@@ -35,20 +35,21 @@ public class BeanFactoryTest {
      * getBean  method test
      */
     @Test
-    public void getBean(){
+    public void getBean() {
         BeanDefinition bd = factory.getBeanDefinition("petStore");
-        IPetStoreService petStore = (PetStoreServiceImpl)factory.getBean("petStore");
-        Assert.assertEquals("cn.godk.macaque.spring.service.PetStoreServiceImpl",bd.getBeanClassName());
+        IPetStoreService petStore = (PetStoreServiceImpl) factory.getBean("petStore");
+        Assert.assertEquals("cn.godk.macaque.spring.service.PetStoreServiceImpl", bd.getBeanClassName());
         Assert.assertNotNull(petStore);
     }
-    @Test
-    public void testInvalidBean(){
 
-       BeanFactory bf =  reader.loadBeanDefinitions("petstore-v1.xml");
-        try{
+    @Test
+    public void testInvalidBean() {
+
+        BeanFactory bf = reader.loadBeanDefinitions("petstore-v1.xml");
+        try {
 
             Object object = bf.getBean("invalid");
-        }catch(BeanCreationException e){
+        } catch (BeanCreationException e) {
             e.printStackTrace();
             return;
         }
@@ -58,10 +59,10 @@ public class BeanFactoryTest {
     }
 
     @Test
-    public void testInvalidXML(){
-        try{
+    public void testInvalidXML() {
+        try {
             reader.loadBeanDefinitions("xxx.xml");
-        }catch(BeanDefinitionStoreException e){
+        } catch (BeanDefinitionStoreException e) {
             return;
         }
         Assert.fail("expect BeanDefinitionStoreException ");

@@ -7,8 +7,8 @@ import cn.godk.macaque.spring.service.PetStoreServiceImpl;
 import org.junit.Assert;
 
 /**
- *
  * beanFactory test case
+ *
  * @author: godk
  * @program: macaque
  * @create: 2018-12-03  10:04
@@ -16,14 +16,12 @@ import org.junit.Assert;
 public class ApplicationContextTest {
 
 
-    public void testGetBean( ){
-        String path  = "";
-        ApplicationContext applicationContext  = new ClassPathXmlApplicationContext(path);
-        IPetStoreService petStore = (PetStoreServiceImpl)applicationContext.getBean("petStore");
+    public void testGetBean() {
+        String path = "";
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(path);
+        IPetStoreService petStore = (PetStoreServiceImpl) applicationContext.getBean("petStore");
         Assert.assertNotNull(petStore);
     }
-
-
 
 
 }
