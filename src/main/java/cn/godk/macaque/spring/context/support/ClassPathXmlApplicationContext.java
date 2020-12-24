@@ -1,5 +1,6 @@
 package cn.godk.macaque.spring.context.support;
 
+import cn.godk.macaque.spring.beans.BeanDefinition;
 import cn.godk.macaque.spring.beans.factory.xml.XmlBeanDefinitionReader;
 import cn.godk.macaque.spring.context.ApplicationContext;
 import cn.godk.macaque.spring.core.io.ClassPathResource;
@@ -27,6 +28,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
        return new ClassPathResource(path);
 
     }
+
 
 
 }

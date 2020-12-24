@@ -1,5 +1,6 @@
 package cn.godk.macaque.spring.context.support;
 
+import cn.godk.macaque.spring.beans.BeanDefinition;
 import cn.godk.macaque.spring.beans.factory.support.DefaultBeanFactory;
 import cn.godk.macaque.spring.beans.factory.xml.XmlBeanDefinitionReader;
 import cn.godk.macaque.spring.context.ApplicationContext;
@@ -44,4 +45,6 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     public void setBeanClassLoader(ClassLoader beanClassLoader) {
         this.beanClassLoader = beanClassLoader;
     }
+
+
 }

@@ -5,6 +5,7 @@ import cn.godk.macaque.spring.beans.Exception.BeanCreationException;
 import cn.godk.macaque.spring.beans.Exception.BeanDefinitionStoreException;
 import cn.godk.macaque.spring.beans.GenericBeanDefinition;
 import cn.godk.macaque.spring.beans.factory.BeanFactory;
+import cn.godk.macaque.spring.beans.factory.config.ConfigurableBeanFactory;
 import cn.godk.macaque.spring.utils.ClassUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @program: macaque
  * @create: 2018-12-03  11:10
  */
-public class DefaultBeanFactory extends  DefaultSingletonBeanRegistry implements BeanFactory,BeanDefinitionRegistry {
+public class DefaultBeanFactory extends  DefaultSingletonBeanRegistry implements ConfigurableBeanFactory,BeanDefinitionRegistry {
 
     /**
      * 功能描述: <br>
