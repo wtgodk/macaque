@@ -1,6 +1,9 @@
 package cn.godk.macaque.spring.context.support;
 
+import cn.godk.macaque.spring.beans.factory.xml.XmlBeanDefinitionReader;
 import cn.godk.macaque.spring.context.ApplicationContext;
+import cn.godk.macaque.spring.core.io.ClassPathResource;
+import cn.godk.macaque.spring.core.io.Resource;
 
 /**
  * loading xml file  init context
@@ -9,22 +12,21 @@ import cn.godk.macaque.spring.context.ApplicationContext;
  * @program: macaque
  * @create: 2018-12-03  10:38
  */
-public class ClassPathXmlApplicationContext implements ApplicationContext {
+public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     /**
      * read xml file
      *
      * @param xmlPath
      */
     public ClassPathXmlApplicationContext(String xmlPath) {
-        getResourceByPath(xmlPath);
+        super(xmlPath);
     }
 
-    public void getResourceByPath(String path) {
-
+    @Override
+    public Resource getResourceByPath(String path) {
+       return new ClassPathResource(path);
 
     }
 
-    public Object getBean(String beanName) {
-        return null;
-    }
+
 }

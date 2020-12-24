@@ -6,6 +6,8 @@ import cn.godk.macaque.spring.beans.Exception.BeanDefinitionStoreException;
 import cn.godk.macaque.spring.beans.factory.BeanFactory;
 import cn.godk.macaque.spring.beans.factory.support.DefaultBeanFactory;
 import cn.godk.macaque.spring.beans.factory.xml.XmlBeanDefinitionReader;
+import cn.godk.macaque.spring.core.io.ClassPathResource;
+import cn.godk.macaque.spring.core.io.Resource;
 import cn.godk.macaque.spring.service.IPetStoreService;
 import cn.godk.macaque.spring.service.PetStoreServiceImpl;
 import org.junit.Assert;
@@ -27,7 +29,9 @@ public class BeanFactoryTest {
     @Before
     public void setUp() {
         factory = new DefaultBeanFactory();
+        Resource resource = new ClassPathResource("petStore.xml");
         reader = new XmlBeanDefinitionReader(factory);
+        reader.loadBeanDefinitions(resource);
 
     }
 
@@ -36,6 +40,7 @@ public class BeanFactoryTest {
      */
     @Test
     public void getBean() {
+
         BeanDefinition bd = factory.getBeanDefinition("petStore");
         IPetStoreService petStore = (PetStoreServiceImpl) factory.getBean("petStore");
         Assert.assertEquals("cn.godk.macaque.spring.service.PetStoreServiceImpl", bd.getBeanClassName());
@@ -45,12 +50,12 @@ public class BeanFactoryTest {
     @Test
     public void testInvalidBean() {
 
-        BeanFactory bf = reader.loadBeanDefinitions("petstore-v1.xml");
+        reader.loadBeanDefinitions( new ClassPathResource("petStore.xml"));
         try {
 
-            Object object = bf.getBean("invalid");
+            Object object = factory.getBean("invalid");
         } catch (BeanCreationException e) {
-            e.printStackTrace();
+         //   e.printStackTrace();
             return;
         }
         Assert.fail();
@@ -61,7 +66,7 @@ public class BeanFactoryTest {
     @Test
     public void testInvalidXML() {
         try {
-            reader.loadBeanDefinitions("xxx.xml");
+            reader.loadBeanDefinitions( new ClassPathResource("xxx.xml"));
         } catch (BeanDefinitionStoreException e) {
             return;
         }
