@@ -12,17 +12,18 @@ import java.io.InputStream;
  * @program macaque
  * @create 2020-12-24  14:02
  */
-public class FileSystemResource implements Resource{
+public class FileSystemResource implements Resource {
 
 
     private final String path;
     private final File file;
 
 
-    public FileSystemResource(@NotNull String path){
+    public FileSystemResource(@NotNull String path) {
         this.path = path;
         this.file = new File(path);
     }
+
     public InputStream getInputStream() throws IOException {
         return new FileInputStream(this.file);
     }

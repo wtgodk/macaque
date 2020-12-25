@@ -1,4 +1,4 @@
-package cn.godk.macaque.spring.v1.context;
+package cn.godk.macaque.spring.context;
 
 import cn.godk.macaque.spring.beans.factory.config.ConfigurableBeanFactory;
 
@@ -7,5 +7,6 @@ import cn.godk.macaque.spring.beans.factory.config.ConfigurableBeanFactory;
  */
 public interface ApplicationContext extends ConfigurableBeanFactory {
 
+    @Override
     Object getBean(String beanName);
 }

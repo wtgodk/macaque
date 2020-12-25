@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
 
 /**
  * BeanFactory test case
@@ -27,11 +26,12 @@ public class BeanFactoryTest {
     XmlBeanDefinitionReader reader = null;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         factory = new DefaultBeanFactory();
         reader = new XmlBeanDefinitionReader(factory);
 
     }
+
     @Test
     public void testGetBean() {
 
@@ -43,36 +43,37 @@ public class BeanFactoryTest {
 
         assertFalse(bd.isPrototype());
 
-        assertEquals(BeanDefinition.SCOPE_DEFAULT,bd.getScope());
+        assertEquals(BeanDefinition.SCOPE_DEFAULT, bd.getScope());
 
-        assertEquals("cn.godk.macaque.spring.service.PetStoreServiceImpl",bd.getBeanClassName());
+        assertEquals("cn.godk.macaque.spring.service.PetStoreServiceImpl", bd.getBeanClassName());
 
-        IPetStoreService petStore = (IPetStoreService)factory.getBean("petStore");
+        IPetStoreService petStore = (IPetStoreService) factory.getBean("petStore");
 
         assertNotNull(petStore);
 
-        IPetStoreService petStore1 = (IPetStoreService)factory.getBean("petStore");
+        IPetStoreService petStore1 = (IPetStoreService) factory.getBean("petStore");
 
         assertTrue(petStore.equals(petStore1));
     }
 
     @Test
-    public void testInvalidBean(){
+    public void testInvalidBean() {
 
         reader.loadBeanDefinitions(new ClassPathResource("petstore-v1.xml"));
-        try{
+        try {
             factory.getBean("invalidBean");
-        }catch(BeanCreationException e){
+        } catch (BeanCreationException e) {
             return;
         }
         Assert.fail("expect BeanCreationException ");
     }
-    @Test
-    public void testInvalidXML(){
 
-        try{
+    @Test
+    public void testInvalidXML() {
+
+        try {
             reader.loadBeanDefinitions(new ClassPathResource("xxxx.xml"));
-        }catch(BeanDefinitionStoreException e){
+        } catch (BeanDefinitionStoreException e) {
             return;
         }
         Assert.fail("expect BeanDefinitionStoreException ");

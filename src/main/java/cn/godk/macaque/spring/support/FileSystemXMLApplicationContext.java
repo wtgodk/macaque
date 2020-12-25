@@ -1,11 +1,11 @@
-package cn.godk.macaque.spring.v1.context.support;
+package cn.godk.macaque.spring.support;
 
 import cn.godk.macaque.spring.core.io.FileSystemResource;
 import cn.godk.macaque.spring.core.io.Resource;
 
 /**
+ * 指定资源路径
  *
- *  指定资源路径
  * @author wt
  * @program macaque
  * @create 2020-12-24  15:23

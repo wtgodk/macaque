@@ -1,4 +1,4 @@
-package cn.godk.macaque.spring.v1.context.support;
+package cn.godk.macaque.spring.support;
 
 import cn.godk.macaque.spring.core.io.ClassPathResource;
 import cn.godk.macaque.spring.core.io.Resource;
@@ -22,10 +22,9 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
     @Override
     public Resource getResourceByPath(String path) {
-       return new ClassPathResource(path);
+        return new ClassPathResource(path);
 
     }
-
 
 
 }

@@ -1,7 +1,5 @@
 package cn.godk.macaque.spring.beans.factory;
 
-import cn.godk.macaque.spring.beans.BeanDefinition;
-
 /**
  * beanFactory interface
  *
