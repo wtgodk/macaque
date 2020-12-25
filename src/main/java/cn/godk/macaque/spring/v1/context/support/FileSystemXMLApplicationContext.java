@@ -1,4 +1,4 @@
-package cn.godk.macaque.spring.context.support;
+package cn.godk.macaque.spring.v1.context.support;
 
 import cn.godk.macaque.spring.core.io.FileSystemResource;
 import cn.godk.macaque.spring.core.io.Resource;

@@ -1,8 +1,5 @@
-package cn.godk.macaque.spring.context.support;
+package cn.godk.macaque.spring.v1.context.support;
 
-import cn.godk.macaque.spring.beans.BeanDefinition;
-import cn.godk.macaque.spring.beans.factory.xml.XmlBeanDefinitionReader;
-import cn.godk.macaque.spring.context.ApplicationContext;
 import cn.godk.macaque.spring.core.io.ClassPathResource;
 import cn.godk.macaque.spring.core.io.Resource;
 

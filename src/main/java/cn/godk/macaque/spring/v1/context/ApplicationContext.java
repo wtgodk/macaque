@@ -1,4 +1,4 @@
-package cn.godk.macaque.spring.context;
+package cn.godk.macaque.spring.v1.context;
 
 import cn.godk.macaque.spring.beans.factory.config.ConfigurableBeanFactory;
 
