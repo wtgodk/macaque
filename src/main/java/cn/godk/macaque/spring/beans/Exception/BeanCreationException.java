@@ -9,11 +9,23 @@ package cn.godk.macaque.spring.beans.Exception;
  */
 public class BeanCreationException extends BeansException {
 
-    public BeanCreationException(String msg) {
+    private String beanName;
+
+
+    public BeanCreationException(String beanName, String msg, Throwable ex) {
         super(msg);
+    }
+
+    public BeanCreationException(String beanName) {
+        super(beanName);
     }
 
     public BeanCreationException(String msg, Throwable cause) {
         super(msg, cause);
     }
+    public BeanCreationException(String beanName, String msg) {
+        super("Error creating bean with name '" + beanName + "': " + msg);
+        this.beanName = beanName;
+    }
+
 }

@@ -15,9 +15,11 @@ public class GenericBeanDefinition implements BeanDefinition {
     List<PropertyValue> propertyValues = new ArrayList<PropertyValue>();
     private String id;
     private String beanClassName;
+    private Class<?> beanClass;
     private boolean singleton = true;
     private boolean prototype = false;
     private String scope = SCOPE_DEFAULT;
+    private ConstructorArgument  constructorArgument  = new ConstructorArgument();
 
 
     public GenericBeanDefinition(String id, String beanClassName) {
@@ -56,4 +58,39 @@ public class GenericBeanDefinition implements BeanDefinition {
     public List<PropertyValue> getPropertyValues() {
         return this.propertyValues;
     }
+
+    @Override
+    public ConstructorArgument getConstructorArgument() {
+        return constructorArgument;
+    }
+
+    @Override
+    public Class<?> getBeanClass() throws IllegalStateException {
+        return beanClass;
+    }
+
+    @Override
+    public Class<?> resolveBeanClass(ClassLoader classLoader) throws ClassNotFoundException {
+        String className = getBeanClassName();
+        if (className == null) {
+            return null;
+        }
+        Class<?> beanClass = classLoader.loadClass(className);
+        this.beanClass = beanClass;
+        return beanClass;
+    }
+
+    public void setID(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getID() {
+        return id;
+    }
+    @Override
+    public boolean hasBeanClass(){
+        return this.beanClass != null;
+    }
+
 }

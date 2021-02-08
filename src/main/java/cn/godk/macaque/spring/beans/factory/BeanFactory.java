@@ -17,4 +17,6 @@ public interface BeanFactory {
      * @return
      */
     Object getBean(String beanName);
+
+    Class<?> getType(String targetBeanName);
 }

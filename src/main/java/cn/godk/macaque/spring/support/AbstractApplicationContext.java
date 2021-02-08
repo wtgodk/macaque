@@ -1,9 +1,12 @@
 package cn.godk.macaque.spring.support;
 
+import cn.godk.macaque.spring.beans.factory.annotation.AutowiredAnnotationProcessor;
+import cn.godk.macaque.spring.beans.factory.config.ConfigurableBeanFactory;
 import cn.godk.macaque.spring.beans.factory.support.DefaultBeanFactory;
 import cn.godk.macaque.spring.beans.factory.xml.XmlBeanDefinitionReader;
 import cn.godk.macaque.spring.context.ApplicationContext;
 import cn.godk.macaque.spring.core.io.Resource;
+import cn.godk.macaque.spring.utils.ClassUtils;
 
 /**
  * @author wt
@@ -21,6 +24,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         Resource resource = this.getResourceByPath(configFile);
         reader.loadBeanDefinitions(resource);
         factory.setBeanClassLoader(this.getBeanClassLoader());
+        registerBeanPostProcessors(this.factory);
     }
 
     /**
@@ -40,15 +44,26 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         return this.factory.getBean(beanName);
     }
 
-    @Override
+
     public ClassLoader getBeanClassLoader() {
-        return beanClassLoader;
+        return (this.beanClassLoader != null ? this.beanClassLoader : ClassUtils.getDefaultClassLoader());
     }
+
+    protected void registerBeanPostProcessors(ConfigurableBeanFactory beanFactory) {
+
+        AutowiredAnnotationProcessor postProcessor = new AutowiredAnnotationProcessor();
+        postProcessor.setBeanFactory(beanFactory);
+        beanFactory.addBeanPostProcessor(postProcessor);
+
+    }
+//
+//    @Override
+//    public void setBeanClassLoader(ClassLoader beanClassLoader) {
+//        this.beanClassLoader = beanClassLoader;
+//    }
 
     @Override
-    public void setBeanClassLoader(ClassLoader beanClassLoader) {
-        this.beanClassLoader = beanClassLoader;
+    public Class<?> getType(String targetBeanName) {
+        return this.getType(targetBeanName);
     }
-
-
 }

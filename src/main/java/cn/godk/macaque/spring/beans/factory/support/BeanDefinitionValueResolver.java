@@ -1,5 +1,6 @@
 package cn.godk.macaque.spring.beans.factory.support;
 
+import cn.godk.macaque.spring.beans.factory.config.ConfigurableBeanFactory;
 import cn.godk.macaque.spring.beans.factory.config.RuntimeBeanReference;
 import cn.godk.macaque.spring.beans.factory.config.TypedStringValue;
 
@@ -13,9 +14,9 @@ import cn.godk.macaque.spring.beans.factory.config.TypedStringValue;
 public class BeanDefinitionValueResolver {
 
 
-    private final DefaultBeanFactory factory;
+    private final ConfigurableBeanFactory factory;
 
-    public BeanDefinitionValueResolver(DefaultBeanFactory factory) {
+    public BeanDefinitionValueResolver(ConfigurableBeanFactory factory) {
         this.factory = factory;
     }
 

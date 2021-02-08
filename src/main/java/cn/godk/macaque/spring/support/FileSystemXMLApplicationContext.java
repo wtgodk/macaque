@@ -11,6 +11,7 @@ import cn.godk.macaque.spring.core.io.Resource;
  * @create 2020-12-24  15:23
  */
 public class FileSystemXMLApplicationContext extends AbstractApplicationContext {
+
     public FileSystemXMLApplicationContext(String configFile) {
         super(configFile);
     }
@@ -19,4 +20,6 @@ public class FileSystemXMLApplicationContext extends AbstractApplicationContext 
     protected Resource getResourceByPath(String configFile) {
         return new FileSystemResource(configFile);
     }
+
+
 }

@@ -74,4 +74,13 @@ public interface BeanDefinition {
      * @date 2020/12/25 10:35
      */
     public List<PropertyValue> getPropertyValues();
+
+
+    public ConstructorArgument getConstructorArgument();
+
+    String getID();
+
+    public boolean hasBeanClass();
+    public Class<?> getBeanClass() throws IllegalStateException ;
+    public Class<?> resolveBeanClass(ClassLoader classLoader) throws ClassNotFoundException;
 }

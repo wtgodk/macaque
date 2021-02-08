@@ -1,12 +1,14 @@
 package cn.godk.macaque.spring.beans.factory.xml;
 
 import cn.godk.macaque.spring.beans.BeanDefinition;
+import cn.godk.macaque.spring.beans.ConstructorArgument;
 import cn.godk.macaque.spring.beans.Exception.BeanDefinitionStoreException;
 import cn.godk.macaque.spring.beans.GenericBeanDefinition;
 import cn.godk.macaque.spring.beans.PropertyValue;
 import cn.godk.macaque.spring.beans.factory.config.RuntimeBeanReference;
 import cn.godk.macaque.spring.beans.factory.config.TypedStringValue;
 import cn.godk.macaque.spring.beans.factory.support.BeanDefinitionRegistry;
+import cn.godk.macaque.spring.context.context.ClassPathBeanDefinitionScanner;
 import cn.godk.macaque.spring.core.io.Resource;
 import cn.godk.macaque.spring.utils.StringUtils;
 import org.apache.commons.logging.Log;
@@ -46,10 +48,21 @@ public class XmlBeanDefinitionReader {
      */
     public static final String CLASS_ATTRIBUTE = "class";
     public static final String PROPERTY_ELEMENT = "property";
+
     public static final String REF_ATTRIBUTE = "ref";
     public static final String VALUE_ATTRIBUTE = "value";
     public static final String NAME_ATTRIBUTE = "name";
     public static final String SCOPE_ATTRIBUTE = "scope";
+
+    public static final String CONSTRUCTOR_ARG_ELEMENT = "constructor-arg";
+
+    public static final String TYPE_ATTRIBUTE = "type";
+
+    public static final String BEANS_NAMESPACE_URI = "http://www.springframework.org/schema/beans";
+
+    public static final String CONTEXT_NAMESPACE_URI = "http://www.springframework.org/schema/context";
+
+    private static final String BASE_PACKAGE_ATTRIBUTE = "base-package";
     protected final Log logger = LogFactory.getLog(getClass());
     private BeanDefinitionRegistry registry = null;
 
@@ -69,17 +82,27 @@ public class XmlBeanDefinitionReader {
             Iterator<Element> iTer = root.elementIterator();
             while (iTer.hasNext()) {
                 Element ele = (Element) iTer.next();
-                String id = ele.attributeValue(ID_ATTRIBUTE);
-                String beanClassName = ele.attributeValue(CLASS_ATTRIBUTE);
-                //create new BeanDeifintion
-                BeanDefinition bd = new GenericBeanDefinition(id, beanClassName);
-                registry.registerBeanDefinition(id, bd);
-                //获取 scope
-                if (ele.attribute(SCOPE_ATTRIBUTE) != null) {
-                    bd.setScope(ele.attributeValue(SCOPE_ATTRIBUTE));
+                if(isContextNamespace(ele.getNamespaceURI())){
+
+                    String basePackage = ele.attributeValue(BASE_PACKAGE_ATTRIBUTE);
+                    ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry);
+                    scanner.doScan(basePackage);
+
+                }else if(isDefaultNamespace(ele.getNamespaceURI())){
+                    String id = ele.attributeValue(ID_ATTRIBUTE);
+                    String beanClassName = ele.attributeValue(CLASS_ATTRIBUTE);
+                    //create new BeanDeifintion
+                    BeanDefinition bd = new GenericBeanDefinition(id, beanClassName);
+                    registry.registerBeanDefinition(id, bd);
+                    //获取 scope
+                    if (ele.attribute(SCOPE_ATTRIBUTE) != null) {
+                        bd.setScope(ele.attributeValue(SCOPE_ATTRIBUTE));
+                    }
+                    // 获取 property
+                    parsePropertyValue(ele, bd);
+
+                    parseConstructorArgument(ele, bd);
                 }
-                // 获取 property
-                parsePropertyValue(ele, bd);
 
             }
         } catch (Exception e) {
@@ -94,6 +117,39 @@ public class XmlBeanDefinitionReader {
             }
         }
     }
+    public boolean isDefaultNamespace(String namespaceUri) {
+        return (!StringUtils.hasLength(namespaceUri) || BEANS_NAMESPACE_URI.equals(namespaceUri));
+    }
+    public boolean isContextNamespace(String namespaceUri){
+        return (!StringUtils.hasLength(namespaceUri) || CONTEXT_NAMESPACE_URI.equals(namespaceUri));
+    }
+    /**
+     * 功能描述: <br>
+     * 〈〉  解析 构造函数参数
+     * @param beanElem
+     * @param bd
+     * @return void
+     * @author weitao
+     * @date 2021/1/19 9:28
+     */
+    private void parseConstructorArgument(Element beanElem, BeanDefinition bd) {
+        Iterator iter = beanElem.elementIterator(CONSTRUCTOR_ARG_ELEMENT);
+        while(iter.hasNext()){
+            Element ele = (Element) iter.next();
+           // String ref = ele.attributeValue(REF_ATTRIBUTE);
+            String type = ele.attributeValue(TYPE_ATTRIBUTE);
+            ConstructorArgument.ValueHolder valueHolder = new ConstructorArgument.ValueHolder();
+            Object o = parsePropertyValue(ele, bd, null);
+            valueHolder.setValue(o);
+            if(StringUtils.hasText(type)){
+               valueHolder.setType(type);
+            }
+
+            bd.getConstructorArgument().add(valueHolder);
+
+
+        }
+    }
 
     private void parsePropertyValue(Element beanElem, BeanDefinition bd) {
         Iterator iter = beanElem.elementIterator(PROPERTY_ELEMENT);
@@ -105,29 +161,37 @@ public class XmlBeanDefinitionReader {
                 return;
             }
             //create new BeanDeifintion
-            String ref = ele.attributeValue(REF_ATTRIBUTE);
-            String val = ele.attributeValue(VALUE_ATTRIBUTE);
-            boolean hasRefAttribute = (ele.attribute(REF_ATTRIBUTE) != null);
-            boolean hasValueAttribute = (ele.attribute(VALUE_ATTRIBUTE) != null);
-
-            if (hasRefAttribute) {
-                // ref 属性 注入bean
-                RuntimeBeanReference runtimeBeanReference = new RuntimeBeanReference(ref);
-                bd.getPropertyValues().add(new PropertyValue(propertyName, runtimeBeanReference));
-            } else if (hasValueAttribute) {
-                // string 属性 注入 value
-                TypedStringValue stringValue = new TypedStringValue(val);
-                bd.getPropertyValues().add(new PropertyValue(propertyName, stringValue));
-            } else {
-                //格式不对
-                String elementName = (propertyName != null) ?
-                        "<property> element for property '" + propertyName + "'" :
-                        "<constructor-arg> element";
-                throw new RuntimeException(elementName + " must specify a ref or value");
-            }
+            Object o = parsePropertyValue(ele, bd,propertyName);
+            bd.getPropertyValues().add(new PropertyValue(propertyName, o));
         }
 
 
+    }
+
+    private Object parsePropertyValue( Element ele, BeanDefinition bd, String propertyName) {
+        String ref = ele.attributeValue(REF_ATTRIBUTE);
+        String val = ele.attributeValue(VALUE_ATTRIBUTE);
+
+        boolean hasRefAttribute = (ele.attribute(REF_ATTRIBUTE) != null);
+        boolean hasValueAttribute = (ele.attribute(VALUE_ATTRIBUTE) != null);
+
+        if (hasRefAttribute) {
+            // ref 属性 注入bean
+            RuntimeBeanReference runtimeBeanReference = new RuntimeBeanReference(ref);
+            return runtimeBeanReference;
+        //    bd.getPropertyValues().add(new PropertyValue(propertyName, runtimeBeanReference));
+        } else if (hasValueAttribute) {
+            // string 属性 注入 value
+            TypedStringValue stringValue = new TypedStringValue(val);
+      //      bd.getPropertyValues().add(new PropertyValue(propertyName, stringValue));
+            return stringValue;
+        } else {
+            //格式不对
+            String elementName = (propertyName != null) ?
+                    "<property> element for property '" + propertyName + "'" :
+                    "<constructor-arg> element";
+            throw new RuntimeException(elementName + " must specify a ref or value");
+        }
     }
 
 
