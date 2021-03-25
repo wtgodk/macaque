@@ -3,7 +3,10 @@ package cn.godk.macaque.spring.v5;
 import cn.godk.macaque.spring.aop.aspectj.AspectJAfterReturningAdvice;
 import cn.godk.macaque.spring.aop.aspectj.AspectJAfterThrowingAdvice;
 import cn.godk.macaque.spring.aop.aspectj.AspectJBeforeAdvice;
+import cn.godk.macaque.spring.aop.aspectj.AspectJExpressionPointcut;
+import cn.godk.macaque.spring.aop.config.AspectInstanceFactory;
 import cn.godk.macaque.spring.aop.framework.ReflectiveMethodInvocation;
+import cn.godk.macaque.spring.beans.factory.BeanFactory;
 import cn.godk.macaque.spring.service.v5.PetStoreService;
 import cn.godk.macaque.spring.tx.TransactionManager;
 import cn.godk.macaque.spring.util.MessageTracker;
@@ -16,40 +19,48 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReflectiveMethodInvocationTest {
-	
-	
-	private AspectJBeforeAdvice beforeAdvice = null;
-	private AspectJAfterReturningAdvice afterAdvice = null;
-	private AspectJAfterThrowingAdvice afterThrowingAdvice = null;
+public class ReflectiveMethodInvocationTest extends AbstractV5Test{
+
+
+	private  AspectJBeforeAdvice beforeAdvice = null;
+	private  AspectJAfterReturningAdvice afterAdvice = null;
+	private AspectJExpressionPointcut pc = null;
+	private BeanFactory beanFactory = null;
+	private AspectInstanceFactory aspectInstanceFactory = null;
+
+	private AspectJAfterThrowingAdvice  afterThrowingAdvice = null;
 	private PetStoreService petStoreService = null;
 	private TransactionManager tx;
-	
+
 
 	@Before
-	public  void setUp() throws Exception{		
+	public  void setUp() throws Exception{
 		petStoreService = new PetStoreService();
 		tx = new TransactionManager();
-		
-		MessageTracker.clearMsgs();
-		beforeAdvice = new AspectJBeforeAdvice(
-				TransactionManager.class.getMethod("start"),
-				null,
-				tx);
-		
-		afterAdvice = new AspectJAfterReturningAdvice(
-				TransactionManager.class.getMethod("commit"),
-				null,
-				tx);	
-		
-		afterThrowingAdvice = new AspectJAfterThrowingAdvice(
-				TransactionManager.class.getMethod("rollback"),
-				null,
-				tx
-				);
-		
-	}
 
+		MessageTracker.clearMsgs();
+
+		beanFactory = this.getBeanFactory("petstore-v5.xml");
+		aspectInstanceFactory = this.getAspectInstanceFactory("tx");
+		aspectInstanceFactory.setBeanFactory(beanFactory);
+
+		beforeAdvice = new AspectJBeforeAdvice(
+				this.getAdviceMethod("start"),
+				null,
+				aspectInstanceFactory);
+
+		afterAdvice = new AspectJAfterReturningAdvice(
+				this.getAdviceMethod("commit"),
+				null,
+				aspectInstanceFactory);
+
+		afterThrowingAdvice = new AspectJAfterThrowingAdvice(
+				this.getAdviceMethod("rollback"),
+				null,
+				aspectInstanceFactory
+		);
+
+	}
 	
 	@Test
 	public void testMethodInvocation() throws Throwable{

@@ -1,5 +1,7 @@
 package cn.godk.macaque.spring.beans;
 
+import cn.godk.macaque.spring.aop.config.MethodLocatingFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,11 +22,19 @@ public class GenericBeanDefinition implements BeanDefinition {
     private boolean prototype = false;
     private String scope = SCOPE_DEFAULT;
     private ConstructorArgument  constructorArgument  = new ConstructorArgument();
-
+    // 是否为手动合成的beanDefinition
+    private boolean isSynthetic = false;
 
     public GenericBeanDefinition(String id, String beanClassName) {
         this.id = id;
         this.beanClassName = beanClassName;
+    }
+
+    public GenericBeanDefinition(Class<?> clz) {
+        // bean class   object.class
+        this.beanClass = clz;
+        // class 全路径 cn.godk.....
+        this.beanClassName = clz.getName();
     }
 
     @Override
@@ -78,6 +88,15 @@ public class GenericBeanDefinition implements BeanDefinition {
         Class<?> beanClass = classLoader.loadClass(className);
         this.beanClass = beanClass;
         return beanClass;
+    }
+
+    @Override
+    public boolean isSynthetic() {
+        return isSynthetic;
+    }
+
+    public void setSynthetic(boolean synthetic) {
+        isSynthetic = synthetic;
     }
 
     public void setID(String id) {

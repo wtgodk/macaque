@@ -83,4 +83,6 @@ public interface BeanDefinition {
     public boolean hasBeanClass();
     public Class<?> getBeanClass() throws IllegalStateException ;
     public Class<?> resolveBeanClass(ClassLoader classLoader) throws ClassNotFoundException;
+
+    boolean isSynthetic();
 }

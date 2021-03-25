@@ -28,6 +28,10 @@ public class ConstructorArgument {
         return argumentValues.isEmpty();
     }
 
+    public void addArgumentValue(Object methodDef) {
+        this.argumentValues.add(new ValueHolder(methodDef));
+    }
+
 
     public static class  ValueHolder{
 
@@ -38,7 +42,14 @@ public class ConstructorArgument {
 
         private String name ;
 
-    public String getType() {
+        public ValueHolder(Object value) {
+            this.value = value;
+        }
+
+        public ValueHolder() {
+        }
+
+        public String getType() {
         return type;
     }
 
@@ -61,5 +72,7 @@ public class ConstructorArgument {
     public void setType(String type) {
         this.type = type;
     }
+
+
 }
 }

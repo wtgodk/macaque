@@ -124,11 +124,11 @@ public class AutowiredAnnotationProcessor implements InstantiationAwareBeanPostP
 
     @Override
     public Object beforeInitialization(Object bean, String beanName) throws BeansException {
-        return null;
+        return bean;
     }
 
     @Override
     public Object afterInitialization(Object bean, String beanName) throws BeansException {
-        return null;
+        return bean;
     }
 }

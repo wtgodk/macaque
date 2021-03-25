@@ -21,14 +21,14 @@ import java.util.List;
  */
 public class ConstructorResolver {
 
-    private ConfigurableBeanFactory  configurableBeanFactory;
+    private AbstractBeanFactory  abstractBeanFactory;
 
     private BeanDefinitionValueResolver beanDefinitionValueResolver ;
     private  SimpleTypeConverter typeConverter = new SimpleTypeConverter();
 
-    public ConstructorResolver(ConfigurableBeanFactory configurableBeanFactory) {
-        this.configurableBeanFactory = configurableBeanFactory;
-        this.beanDefinitionValueResolver = new BeanDefinitionValueResolver(configurableBeanFactory);
+    public ConstructorResolver(AbstractBeanFactory abstractBeanFactory) {
+        this.abstractBeanFactory = abstractBeanFactory;
+        this.beanDefinitionValueResolver = new BeanDefinitionValueResolver(abstractBeanFactory);
 
     }
 
@@ -38,7 +38,7 @@ public class ConstructorResolver {
         Class<?> beanClass = null;
         try {
             // 实例化 bd
-           beanClass = configurableBeanFactory.getBeanClassLoader().loadClass(bd.getBeanClassName());
+           beanClass = abstractBeanFactory.getBeanClassLoader().loadClass(bd.getBeanClassName());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             throw new RuntimeException();

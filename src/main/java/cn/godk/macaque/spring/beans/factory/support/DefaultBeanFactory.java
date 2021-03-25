@@ -1,7 +1,10 @@
 package cn.godk.macaque.spring.beans.factory.support;
 
+import cn.godk.macaque.spring.aop.Advice;
 import cn.godk.macaque.spring.beans.*;
 import cn.godk.macaque.spring.beans.Exception.BeanCreationException;
+import cn.godk.macaque.spring.beans.Exception.BeansException;
+import cn.godk.macaque.spring.beans.factory.BeanFactoryAware;
 import cn.godk.macaque.spring.beans.factory.NoSuchBeanDefinitionException;
 import cn.godk.macaque.spring.beans.factory.annotation.AutowiredAnnotationProcessor;
 import cn.godk.macaque.spring.beans.factory.config.BeanPostProcessor;
@@ -26,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @program: macaque
  * @create: 2018-12-03  11:10
  */
-public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory, BeanDefinitionRegistry {
+public class DefaultBeanFactory extends AbstractBeanFactory implements  BeanDefinitionRegistry {
 
     /**
      * 功能描述: <br>
@@ -75,17 +78,35 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
         return beanDefinition.getBeanClass();
     }
 
+    @Override
+    public List<Object> getBeansByType(Class<?> clz) {
+        List<Object> result = new ArrayList<>();
+        List<String> beanIds = getBeanIDsByType(clz);
+        for (String beanId : beanIds) {
+            Object bean = this.getBean(beanId);
+            result.add(bean);
+        }
+        return result;
+    }
 
-    private Object createBean(BeanDefinition beanDefinition) {
+    private List<String> getBeanIDsByType(Class<?> type){
+        List<String> result = new ArrayList<String>();
+        for(String beanName :this.beanDefinitionMap.keySet()){
+            if(type.isAssignableFrom(this.getType(beanName))){
+                result.add(beanName);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    protected Object createBean(BeanDefinition beanDefinition) {
         Object bean = instantiateBean(beanDefinition);
-
         // 构造注入
         // 属性注入
-
         populateBean(beanDefinition, bean);
 
-
-
+         bean = initializeBean(beanDefinition, bean);
         return bean;
     }
 
@@ -93,6 +114,35 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
         return beanPostProcessors;
     }
 
+    protected Object initializeBean(BeanDefinition bd, Object bean)  {
+        invokeAwareMethods(bean);
+        //Todo，调用Bean的init方法，暂不实现
+        if(!bd.isSynthetic()){
+            //生成代理
+            return applyBeanPostProcessorsAfterInitialization(bean,bd.getID());
+        }
+        return bean;
+    }
+
+    public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
+            throws BeansException {
+
+        Object result = existingBean;
+        for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+            // BeanPostProcessor 的初始化bean之后生成代理
+            result = beanProcessor.afterInitialization(result, beanName);
+            if (result == null) {
+                return result;
+            }
+        }
+        return result;
+    }
+
+    private void invokeAwareMethods(Object bean) {
+        if (bean instanceof BeanFactoryAware) {
+            ((BeanFactoryAware) bean).setBeanFactory(this);
+        }
+    }
 
     /**
      * 功能描述: <br>

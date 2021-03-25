@@ -2,6 +2,7 @@ package cn.godk.macaque.spring.aop.aspectj;
 
 import cn.godk.macaque.spring.aop.Advice;
 import cn.godk.macaque.spring.aop.Pointcut;
+import cn.godk.macaque.spring.aop.config.AspectInstanceFactory;
 import org.aopalliance.intercept.MethodInvocation;
 
 import java.lang.reflect.Method;
@@ -15,12 +16,12 @@ public abstract  class AbstractAspectJAdvice implements Advice {
 
     protected Method adviceMethod;
     protected AspectJExpressionPointcut pointcut;
-    protected Object adviceObject;
+    protected AspectInstanceFactory aspectInstanceFactory;
 
-    public AbstractAspectJAdvice(Method adviceMethod, AspectJExpressionPointcut pointcut, Object adviceObject) {
+    public AbstractAspectJAdvice(Method adviceMethod, AspectJExpressionPointcut pointcut, AspectInstanceFactory aspectInstanceFactory) {
         this.adviceMethod = adviceMethod;
         this.pointcut = pointcut;
-        this.adviceObject = adviceObject;
+        this.aspectInstanceFactory = aspectInstanceFactory;
     }
 
 
@@ -30,8 +31,15 @@ public abstract  class AbstractAspectJAdvice implements Advice {
     }
 
     public void invokeAdviceMethod() throws  Throwable{
-        adviceMethod.invoke(adviceObject);
+        adviceMethod.invoke(aspectInstanceFactory.getAspectInstance());
     }
 
 
+    public  Method getAdviceMethod(){
+        return this.adviceMethod;
+    }
+
+    public  Object getAdviceInstance() throws Exception {
+        return aspectInstanceFactory.getAspectInstance();
+    }
 }

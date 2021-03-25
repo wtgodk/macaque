@@ -1,5 +1,6 @@
 package cn.godk.macaque.spring.beans.factory.xml;
 
+import cn.godk.macaque.spring.aop.config.ConfigBeanDefinitionParser;
 import cn.godk.macaque.spring.beans.BeanDefinition;
 import cn.godk.macaque.spring.beans.ConstructorArgument;
 import cn.godk.macaque.spring.beans.Exception.BeanDefinitionStoreException;
@@ -61,7 +62,7 @@ public class XmlBeanDefinitionReader {
     public static final String BEANS_NAMESPACE_URI = "http://www.springframework.org/schema/beans";
 
     public static final String CONTEXT_NAMESPACE_URI = "http://www.springframework.org/schema/context";
-
+    public static final String AOP_NAMESPACE_URI = "http://www.springframework.org/schema/aop";
     private static final String BASE_PACKAGE_ATTRIBUTE = "base-package";
     protected final Log logger = LogFactory.getLog(getClass());
     private BeanDefinitionRegistry registry = null;
@@ -83,25 +84,13 @@ public class XmlBeanDefinitionReader {
             while (iTer.hasNext()) {
                 Element ele = (Element) iTer.next();
                 if(isContextNamespace(ele.getNamespaceURI())){
-
-                    String basePackage = ele.attributeValue(BASE_PACKAGE_ATTRIBUTE);
-                    ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry);
-                    scanner.doScan(basePackage);
+                    parseComponentElement(ele);
 
                 }else if(isDefaultNamespace(ele.getNamespaceURI())){
-                    String id = ele.attributeValue(ID_ATTRIBUTE);
-                    String beanClassName = ele.attributeValue(CLASS_ATTRIBUTE);
-                    //create new BeanDeifintion
-                    BeanDefinition bd = new GenericBeanDefinition(id, beanClassName);
-                    registry.registerBeanDefinition(id, bd);
-                    //获取 scope
-                    if (ele.attribute(SCOPE_ATTRIBUTE) != null) {
-                        bd.setScope(ele.attributeValue(SCOPE_ATTRIBUTE));
-                    }
-                    // 获取 property
-                    parsePropertyValue(ele, bd);
-
-                    parseConstructorArgument(ele, bd);
+                    // 普通bean
+                    parseDefaultElement(ele);
+                }else if(this.isAOPNamespace(ele.getNamespaceURI())){
+                    parseAOPElement(ele);  //例如 <aop:config>
                 }
 
             }
@@ -117,11 +106,40 @@ public class XmlBeanDefinitionReader {
             }
         }
     }
+
+    private void parseAOPElement(Element ele) {
+        ConfigBeanDefinitionParser parser = new ConfigBeanDefinitionParser();
+        parser.parse(ele, this.registry);
+
+    }
+
+    private void parseComponentElement(Element ele) {
+        String basePackages = ele.attributeValue(BASE_PACKAGE_ATTRIBUTE);
+        ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry);
+        scanner.doScan(basePackages);
+
+    }
+    public boolean isAOPNamespace(String namespaceUri){
+        return (!StringUtils.hasLength(namespaceUri) || AOP_NAMESPACE_URI.equals(namespaceUri));
+    }
+
     public boolean isDefaultNamespace(String namespaceUri) {
         return (!StringUtils.hasLength(namespaceUri) || BEANS_NAMESPACE_URI.equals(namespaceUri));
     }
     public boolean isContextNamespace(String namespaceUri){
         return (!StringUtils.hasLength(namespaceUri) || CONTEXT_NAMESPACE_URI.equals(namespaceUri));
+    }
+    private void parseDefaultElement(Element ele) {
+        String id = ele.attributeValue(ID_ATTRIBUTE);
+        String beanClassName = ele.attributeValue(CLASS_ATTRIBUTE);
+        BeanDefinition bd = new GenericBeanDefinition(id,beanClassName);
+        if (ele.attribute(SCOPE_ATTRIBUTE)!=null) {
+            bd.setScope(ele.attributeValue(SCOPE_ATTRIBUTE));
+        }
+        parseConstructorArgument(ele,bd);
+        parsePropertyValue(ele,bd);
+        this.registry.registerBeanDefinition(id, bd);
+
     }
     /**
      * 功能描述: <br>

@@ -1,5 +1,6 @@
 package cn.godk.macaque.spring.support;
 
+import cn.godk.macaque.spring.aop.aspectj.AspectJAutoProxyCreator;
 import cn.godk.macaque.spring.beans.factory.annotation.AutowiredAnnotationProcessor;
 import cn.godk.macaque.spring.beans.factory.config.ConfigurableBeanFactory;
 import cn.godk.macaque.spring.beans.factory.support.DefaultBeanFactory;
@@ -7,6 +8,8 @@ import cn.godk.macaque.spring.beans.factory.xml.XmlBeanDefinitionReader;
 import cn.godk.macaque.spring.context.ApplicationContext;
 import cn.godk.macaque.spring.core.io.Resource;
 import cn.godk.macaque.spring.utils.ClassUtils;
+
+import java.util.List;
 
 /**
  * @author wt
@@ -51,10 +54,17 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 
     protected void registerBeanPostProcessors(ConfigurableBeanFactory beanFactory) {
 
-        AutowiredAnnotationProcessor postProcessor = new AutowiredAnnotationProcessor();
-        postProcessor.setBeanFactory(beanFactory);
-        beanFactory.addBeanPostProcessor(postProcessor);
+        {
+            AutowiredAnnotationProcessor postProcessor = new AutowiredAnnotationProcessor();
+            postProcessor.setBeanFactory(beanFactory);
+            beanFactory.addBeanPostProcessor(postProcessor);
+        }
 
+        {
+            AspectJAutoProxyCreator postProcessor = new AspectJAutoProxyCreator();
+            postProcessor.setBeanFactory(beanFactory);
+            beanFactory.addBeanPostProcessor(postProcessor);
+        }
     }
 //
 //    @Override
@@ -65,5 +75,10 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     @Override
     public Class<?> getType(String targetBeanName) {
         return this.getType(targetBeanName);
+    }
+
+    @Override
+    public List<Object> getBeansByType(Class<?> clz) {
+        return this.factory.getBeansByType(clz);
     }
 }

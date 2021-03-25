@@ -1,8 +1,8 @@
 package cn.godk.macaque.spring.service.v5;
 
 import cn.godk.macaque.spring.beans.factory.annotation.Autowired;
-import cn.godk.macaque.spring.dao.v4.AccountDao;
-import cn.godk.macaque.spring.dao.v4.ItemDao;
+import cn.godk.macaque.spring.dao.v5.AccountDao;
+import cn.godk.macaque.spring.dao.v5.ItemDao;
 import cn.godk.macaque.spring.stereotype.Component;
 import cn.godk.macaque.spring.util.MessageTracker;
 

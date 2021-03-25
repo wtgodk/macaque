@@ -2,6 +2,8 @@ package cn.godk.macaque.spring.aop.config;
 
 import cn.godk.macaque.spring.beans.BeanUtils;
 import cn.godk.macaque.spring.beans.factory.BeanFactory;
+import cn.godk.macaque.spring.beans.factory.BeanFactoryAware;
+import cn.godk.macaque.spring.beans.factory.FactoryBean;
 import cn.godk.macaque.spring.utils.StringUtils;
 
 import java.lang.reflect.Method;
@@ -11,7 +13,7 @@ import java.lang.reflect.Method;
  * @program macaque
  * @create 2021-02-07  14:37
  */
-public class MethodLocatingFactory {
+public class MethodLocatingFactory implements FactoryBean<Method>, BeanFactoryAware {
     private String targetBeanName;
 
     private String methodName;
@@ -27,6 +29,7 @@ public class MethodLocatingFactory {
     }
 
 
+    @Override
     public void setBeanFactory(BeanFactory beanFactory) {
         if (!StringUtils.hasText(this.targetBeanName)) {
             throw new IllegalArgumentException("Property 'targetBeanName' is required");
@@ -47,8 +50,14 @@ public class MethodLocatingFactory {
     }
 
 
+    @Override
     public Method getObject() throws Exception {
         return this.method;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return Method.class;
     }
 
 }

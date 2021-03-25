@@ -1,5 +1,6 @@
 package cn.godk.macaque.spring.aop.aspectj;
 
+import cn.godk.macaque.spring.aop.config.AspectInstanceFactory;
 import org.aopalliance.intercept.MethodInvocation;
 
 import java.lang.reflect.Method;
@@ -12,8 +13,8 @@ import java.lang.reflect.Method;
 public class AspectJAfterThrowingAdvice extends AbstractAspectJAdvice {
 
 
-    public AspectJAfterThrowingAdvice(Method adviceMethod, AspectJExpressionPointcut pointcut, Object adviceObject) {
-        super(adviceMethod, pointcut, adviceObject);
+    public AspectJAfterThrowingAdvice(Method adviceMethod, AspectJExpressionPointcut pointcut, AspectInstanceFactory aspectInstanceFactory) {
+        super(adviceMethod, pointcut, aspectInstanceFactory);
     }
 
     @Override

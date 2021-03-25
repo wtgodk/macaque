@@ -1,5 +1,9 @@
 package cn.godk.macaque.spring.beans.factory;
 
+import cn.godk.macaque.spring.aop.Advice;
+
+import java.util.List;
+
 /**
  * beanFactory interface
  *
@@ -19,4 +23,6 @@ public interface BeanFactory {
     Object getBean(String beanName);
 
     Class<?> getType(String targetBeanName);
+
+    List<Object> getBeansByType(Class<?> clz);
 }
